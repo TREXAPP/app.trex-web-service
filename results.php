@@ -156,15 +156,10 @@ function getTableArray($headerIDsArray, $RaceGroupID, $RaceID, $display) {
 			$returnArray[$racersCounter][4] = $row['Country'];
 			
 			$CPCounter = 0;
-			while (isset($headerIDsArray[$CPCounter])) {
-				
-				
-				
+			while (isset($headerIDsArray[$CPCounter])) {			
 				$returnArray[$racersCounter][$CPCounter+5] = findTheEntryTime($row['ActiveRacerID'],$headerIDsArray[$CPCounter],$entriesArray);
-	
 				$CPCounter++;
 			}
-			
 			$racersCounter++;
 		}	
 
@@ -197,26 +192,53 @@ function sortTableArray(&$tableArray) {
 	//2 ja vrtime tableArray na sledniov nacin:
 	//3 sekoja kolona, pocnuvajki od poslednata (finish) pa se do 1 kontrolna
 	for ($i=count($tableArray[0])-1;$i>4;$i--) {
-		echo "<br>kolona: " . $tableArray[0][$i] . "<br>";		
+		echo "<br>za kolona so red. broj: " . $i . "<br>";		
 		//4 zemame predvid samo ako postoi vreme (ne e prazno)
 		//5 stavi gi vo privremena niza ($sortColumn) samo tie sto imaat vreminja
 		$sortColumn = array ();
 		$stColumnCount = 0;
 		for ($j=0;$j<count($tableArray);$j++) {
 			echo "<br>red: " . $j . "<br>";
-			if ($tableArray[j][i] != "--" || $tableArray[j][i] != "" || !is_null($tableArray[j][i])) {
-				$sortTotal[$stColumnCount]['BIB'] = $tableArray[j][1];
-				$sortTotal[$stColumnCount]['Time'] = $tableArray[j][i];
+			echo "<br>vreme: " . $tableArray[$j][$i] . "<br>";
+			if (($tableArray[$j][$i] != "--") && ($tableArray[$j][$i] != "") && (!is_null($tableArray[$j][$i]))) {
+				echo "<br>go dodavame vo nizata \$sortColumn<br>";
+				$sortColumn['BIB'][$stColumnCount] = $tableArray[$j][1];
+				$sortColumn['Time'][$stColumnCount] = $tableArray[$j][$i];
 				$stColumnCount++;
+			} else {
+				echo "<br>ne go dodavame vo \$sortColumn<br>";
 			}
-			
-			//6 sortiraj ja taa niza od najmal do najgolem
-			//TODO
 		}
+		echo "pred:<br>";
+		var_dump($sortColumn);
+		
+		$result = usort($sortColumn, function($a, $b) {
+			return strcmp($a['Time'], $b['Time']);
+		});
+/*
+		//6 sortiraj ja $sortColumn od najmal do najgolem spored 'Time'
+		// Obtain a list of columns
+		foreach ($sortColumn as $key => $row) {
+			$Time[$key]  = $row['Time'];
+			$Timestamp[$key]  = strtotime($row['Time']);
+			$BIB[$key]  = $row['BIB'];
+			
+			//strtotime
+		}
+*/
+		// Sort the data with volume descending, edition ascending
+		// Add $data as the last parameter, to sort by the common key
+		//array_multisort($Timestamp, SORT_ASC, $BIB, SORT_ASC, $sortColumn['BIB'], $sortColumn['Time']);
+		//array_multisort($Timestamp, SORT_ASC,$sortColumn['Time'], $sortColumn['BIB'], );
+		//array_multisort($sortColumn['Time'], SORT_ASC, $sortColumn);
+		echo "<br>posle:<br>";
+		var_dump($result);
 	}
-	/*
-	*/
+
+	
 }
+
+
 
 function findTheEntryTime($ActiveRacerID, $CPNo, $entriesArray) {
 	$i=0;
@@ -225,7 +247,8 @@ function findTheEntryTime($ActiveRacerID, $CPNo, $entriesArray) {
 		if (!$found) {
 			if (($entriesArray[$i]['ActiveRacerID'] == $ActiveRacerID) && ($entriesArray[$i]['CPNo'] == $CPNo)) {
 				$found == true;
-				return substr($entriesArray[$i]['Time'],11);
+				//return substr($entriesArray[$i]['Time'],11);
+				return $entriesArray[$i]['Time'];
 			}
 		}
 		$i++;
@@ -310,7 +333,7 @@ function DrawTheTable($headerArray, $tableArray, $display) {
 			$returnStr .= "	<tr>";
 			while (isset($tableArray[$rowCounter][$dataCounter])) {
 				$returnStr .= "	<td>";
-				$returnStr .= $tableArray[$rowCounter][$dataCounter];
+				$returnStr .= formatTime($tableArray[$rowCounter][$dataCounter]);
 				$returnStr .= "	</td>";
 				$dataCounter++;
 			}
@@ -347,6 +370,12 @@ function DrawSubRacesList($races_result, $RaceGroupID) {
 	$returnStr .= "</div>";
 	
 	return $returnStr;
+}
+
+function formatTime($rawValue) {
+	//TODO
+	//return substr(rawValue,11);
+	return $rawValue;
 }
 
 ?>
