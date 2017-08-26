@@ -17,7 +17,15 @@ display - [live,final] - dali da prikaze live rezultati i officijalni
 <body>
 
 <?php
+/************
+testing sort
+***********/
 
+$testArray = 
+
+/************
+testing end
+***********/
 require 'conn.php';
 
 if (isset($_GET['RaceGroupID'])) {
@@ -211,8 +219,13 @@ function sortTableArray(&$tableArray) {
 		}
 		echo "pred:<br>";
 		var_dump($sortColumn);
-		
-		$result = usort($sortColumn, function($a, $b) {
+				
+		usort($sortColumn['Time'], function($a, $b) {
+			return strcmp($a['Time'], $b['Time']);
+		});
+		//TODO
+		// NAPRAVI JA NIZATA DA BIDE [0]['BIB'], [0]{Time] namesto [BIB][0], [Time][0], i posle sortiraj so usort!!!!!!!!!!!!!!!!!!!!!!!!
+		usort($sortColumn['BIB'], function($a, $b) {
 			return strcmp($a['Time'], $b['Time']);
 		});
 /*
@@ -232,10 +245,35 @@ function sortTableArray(&$tableArray) {
 		//array_multisort($Timestamp, SORT_ASC,$sortColumn['Time'], $sortColumn['BIB'], );
 		//array_multisort($sortColumn['Time'], SORT_ASC, $sortColumn);
 		echo "<br>posle:<br>";
-		var_dump($result);
+		var_dump($sortColumn);
 	}
 
 	
+}
+
+function array_msort($array, $cols)
+{
+    $colarr = array();
+    foreach ($cols as $col => $order) {
+        $colarr[$col] = array();
+        foreach ($array as $k => $row) { $colarr[$col]['_'.$k] = strtolower($row[$col]); }
+    }
+    $eval = 'array_multisort(';
+    foreach ($cols as $col => $order) {
+        $eval .= '$colarr[\''.$col.'\'],'.$order.',';
+    }
+    $eval = substr($eval,0,-1).');';
+    eval($eval);
+    $ret = array();
+    foreach ($colarr as $col => $arr) {
+        foreach ($arr as $k => $v) {
+            $k = substr($k,1);
+            if (!isset($ret[$k])) $ret[$k] = $array[$k];
+            $ret[$k][$col] = $array[$k][$col];
+        }
+    }
+    return $ret;
+
 }
 
 
