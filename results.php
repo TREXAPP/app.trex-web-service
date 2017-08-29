@@ -159,7 +159,7 @@ function getTableArray($headerIDsArray, $RaceGroupID, $RaceID, $display, $StartT
 	}	
 
 	//retrieve racers
-	$q = "SELECT ActiveRacerID, CONCAT(FirstName, ' ', LastName) AS Name, Gender, Country, BIB FROM `ActiveRacers`
+	$q = "SELECT ActiveRacerID, CONCAT(FirstName, ' ', LastName) AS Name, Gender, Country, BIB, DateOfBirth FROM `ActiveRacers`
 			JOIN Racers ON ActiveRacers.RacerID = Racers.RacerID
 			WHERE RaceID = " . $RaceID;
 	$racers_result = mysqli_query($conn,$q);
@@ -168,20 +168,24 @@ function getTableArray($headerIDsArray, $RaceGroupID, $RaceID, $display, $StartT
 		while($row = $racers_result->fetch_array(MYSQL_ASSOC)) {
 			$racersArray[] = $row;
 			/*
-				$resultArray[0] = "Position\n(Total)";
+				$resultArray[0] = "Position\n(General)";
 				$resultArray[1] = "Position (Gender)";
-				$resultArray[2] = "Starting number";
-				$resultArray[3] = "Name";
-				$resultArray[4] = "Gender";
-				$resultArray[5] = "Country";
+				$resultArray[2] = "Position (Categories)";
+				$resultArray[3] = "Starting number";
+				$resultArray[4] = "Name";
+				$resultArray[5] = "Gender";
+				$resultArray[6] = "Age";
+				$resultArray[7] = "Country";
 			*/
 			
 			$returnArray[$racersCounter][0] = $racersCounter+1;
 			$returnArray[$racersCounter][1] = $racersCounter+1;
-			$returnArray[$racersCounter][2] = $row['BIB'];
-			$returnArray[$racersCounter][3] = $row['Name'];
-			$returnArray[$racersCounter][4] = $row['Gender'];
-			$returnArray[$racersCounter][5] = $row['Country'];
+			$returnArray[$racersCounter][2] = $racersCounter+1;
+			$returnArray[$racersCounter][3] = $row['BIB'];
+			$returnArray[$racersCounter][4] = $row['Name'];
+			$returnArray[$racersCounter][5] = $row['Gender'];
+			$returnArray[$racersCounter][6] = getAge($row['DateOfBirth'], $StartTime);
+			$returnArray[$racersCounter][7] = $row['Country'];
 			
 			$CPCounter = 0;
 			while (isset($headerIDsArray[$CPCounter])) {			
@@ -200,6 +204,11 @@ function getTableArray($headerIDsArray, $RaceGroupID, $RaceID, $display, $StartT
 	}
 
 	return $returnArray;
+}
+
+function getAge($dateOfBirth, $StartTime) {
+	//TODO
+	return 30;
 }
 
 function sortTableArray(&$tableArray, $headerArray, $StartTime) {
@@ -261,8 +270,17 @@ function sortTableArray(&$tableArray, $headerArray, $StartTime) {
 	
 	$sortedTableArray = array ();
 	$sortedIndex = 0;
+	
 	$positionMale = 1;
 	$positionFemale = 1;
+	
+	$positionSE = 1;
+	$positionVE = 1;
+	
+	$positionSEM = 1;
+	$positionSEF = 1;
+	$positionVEM = 1;
+	$positionVEF = 1;
 	
 	//8 Otkako $sortTotal e formirana, nov for ciklus koj sto ke ja sortira $tableArray spored redosledot vo $sortTotal.
 	foreach ($sortTotal as &$sortTotalRow) {
@@ -383,8 +401,8 @@ function getHeaderArray($RaceGroupID, $RaceID, $display, &$headerIDsArray) {
 			$i++;
 		}
 	//add other fields in front
-	$resultArray[0]['Value'] = "Position<br>(Total)";
-	$resultArray[1]['Value'] = "Position<br>(Gender)";
+	$resultArray[0]['Value'] = "Position<br>(General)";
+	$resultArray[1]['Value'] = "Position<br>(Categories)<br>Gender | Age | Gender-Age";
 	$resultArray[2]['Value'] = "Starting<br>BIB number";
 	$resultArray[3]['Value'] = "Name";
 	$resultArray[4]['Value'] = "Gender";
@@ -407,39 +425,41 @@ function DrawTheTable($headerArray, $tableArray, $display, $StartTime) {
 	$returnStr = "";
 	if ($display == 'live') {
 		$returnStr .= "
-		<table class='live_results_table'>
-			<tbody>
-				<tr>";
-		$headerCounter = 0;
-		while (isset($headerArray[$headerCounter]['Value'])) {
-			$returnStr .= "	<th>";
-			$returnStr .= $headerArray[$headerCounter]['Value'];
-			$returnStr .= "	</th>";
-			
-			$headerCounter++;
-		}
-			$returnStr .= "	</tr>";
-			
-		$rowCounter = 0;
-		while (isset($tableArray[$rowCounter][0])) {
-			$dataCounter = 0;
-			$returnStr .= "	<tr>";
-			while (isset($tableArray[$rowCounter][$dataCounter])) {
-				$returnStr .= "	<td>";
-				if (($dataCounter > 5) && ($dataCounter < count($tableArray[0])-1)) {				
-					$returnStr .= formatTime($tableArray[$rowCounter][$dataCounter], $StartTime);
-				} else {
-					$returnStr .= $tableArray[$rowCounter][$dataCounter];
-				}
-				$returnStr .= "	</td>";
-				$dataCounter++;
+		<div class='live_results_table_wrapper'>
+			<table class='live_results_table'>
+				<tbody>
+					<tr>";
+			$headerCounter = 0;
+			while (isset($headerArray[$headerCounter]['Value'])) {
+				$returnStr .= "	<th>";
+				$returnStr .= $headerArray[$headerCounter]['Value'];
+				$returnStr .= "	</th>";
+				
+				$headerCounter++;
 			}
-			$returnStr .= "	</tr>";
-			$rowCounter++;
-		}
+				$returnStr .= "	</tr>";
+				
+			$rowCounter = 0;
+			while (isset($tableArray[$rowCounter][0])) {
+				$dataCounter = 0;
+				$returnStr .= "	<tr>";
+				while (isset($tableArray[$rowCounter][$dataCounter])) {
+					$returnStr .= "	<td>";
+					if (($dataCounter > 5) && ($dataCounter < count($tableArray[0])-1)) {				
+						$returnStr .= formatTime($tableArray[$rowCounter][$dataCounter], $StartTime);
+					} else {
+						$returnStr .= $tableArray[$rowCounter][$dataCounter];
+					}
+					$returnStr .= "	</td>";
+					$dataCounter++;
+				}
+				$returnStr .= "	</tr>";
+				$rowCounter++;
+			}
 
-			$returnStr .= "	</tbody>
-		</table>";
+				$returnStr .= "	</tbody>
+			</table>
+		</div>";
 	}
 
 	return $returnStr;
@@ -467,13 +487,13 @@ function DrawSubRacesList($races, $RaceGroupID) {
 	foreach ($races as &$row) {
 		$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
 		$subrace_link = $actual_link . "?RaceGroupID=" . $RaceGroupID . "&RaceID=" . $row['RaceID'];
-		$returnStr .=  "<li>";
+		$returnStr .=  "<li><div class='subrace'>";
 		$returnStr .= $row['Description'];
 		$returnStr .= "<br/>";
-		$returnStr .=  "<a href='" . $subrace_link .  "&display=live'>LIVE RESULTS</a>";
-		$returnStr .= " | ";
-		$returnStr .=  "<a href='" . $subrace_link .  "&display=final'>OFFICIAL RESULTS</a>";
-		$returnStr .=  "</li>";
+		$returnStr .=  "<a class='live_results_link' href='" . $subrace_link .  "&display=live'>LIVE RESULTS</a>";
+		$returnStr .= "<span class='separator_results_link'> | </span>";
+		$returnStr .=  "<a class='official_results_link' href='" . $subrace_link .  "&display=final'>OFFICIAL RESULTS</a>";
+		$returnStr .=  "</div></li>";
 	}
 		$returnStr .=  "</ul>";
 	
