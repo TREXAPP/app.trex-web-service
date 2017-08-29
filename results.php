@@ -16,6 +16,7 @@ display - [live,final] - dali da prikaze live rezultati i officijalni
 <title>Results - Krali Marko Trails 2017</title>
 <meta name="Description" content="Live and Official results from the Krali Marko Trails 2017 race, Macedonia">
 <meta name="Keywords" content="Krali Marko, Krali Marko Trails, KMT, KMT2017, Running, Trail Running, Ultra Marathon, Macedonia, Ultra Trail Running">
+<link href="https://fonts.googleapis.com/css?family=Cuprum|Fira+Sans+Extra+Condensed|Open+Sans+Condensed:300|Roboto+Condensed|Ubuntu+Condensed" rel="stylesheet">
 <link rel="stylesheet" href="/style_results.css">
 </head>
 <body>
@@ -71,7 +72,7 @@ if (isset($_GET['RaceGroupID'])) {
 		$headerArray = getHeaderArray($RaceGroupID, $RaceID, $display, $headerIDsArray);
 		$tableArray = getTableArray($headerIDsArray, $RaceGroupID, $RaceID, $display, $StartTime);
 		$sortedTableArray = sortTableArray($tableArray, $headerArray, $StartTime);
-		echo DrawTheTable($headerArray, $sortedTableArray, $display);
+		echo DrawTheTable($headerArray, $sortedTableArray, $display, $StartTime);
 	}
 	
 } else {
@@ -167,7 +168,7 @@ function getTableArray($headerIDsArray, $RaceGroupID, $RaceID, $display, $StartT
 		while($row = $racers_result->fetch_array(MYSQL_ASSOC)) {
 			$racersArray[] = $row;
 			/*
-				$resultArray[0] = "Position (Total)";
+				$resultArray[0] = "Position\n(Total)";
 				$resultArray[1] = "Position (Gender)";
 				$resultArray[2] = "Starting number";
 				$resultArray[3] = "Name";
@@ -274,10 +275,10 @@ function sortTableArray(&$tableArray, $headerArray, $StartTime) {
 				$sortedTableArray[$sortedIndex][0] = $sortedIndex+1;
 				//Position (gender)
 				if ($sortedTableArray[$sortedIndex][4] == 'F') {
-					$sortedTableArray[$sortedIndex][1] = $positionFemale;
+					$sortedTableArray[$sortedIndex][1] = 'F' . $positionFemale;
 					$positionFemale++;
 				} else {
-					$sortedTableArray[$sortedIndex][1] = $positionMale;
+					$sortedTableArray[$sortedIndex][1] = 'M' . $positionMale;
 					$positionMale++;
 				}
 				//Avg Speed
@@ -300,19 +301,22 @@ function sortTableArray(&$tableArray, $headerArray, $StartTime) {
 		}
 		
 		if (!$found) {
-				$sortedTableArray[$sortedIndex] = $tableArrayRow;
-				
+				$sortedTableArray[$sortedIndex] = $tableArrayRow;				
 				$sortedTableArray[$sortedIndex][0] = $sortedIndex+1;
-				if ($sortedTableArray[$sortedIndex][4] == 'F') {
-					$sortedTableArray[$sortedIndex][1] = $positionFemale;
-					$positionFemale++;
-				} else {
-					$sortedTableArray[$sortedIndex][1] = $positionMale;
-					$positionMale++;
-				}
 				
+			if ($sortedTableArray[$sortedIndex][4] == 'F') {
+				$sortedTableArray[$sortedIndex][1] = 'F' . $positionFemale;
+				$positionFemale++;
+			} else {
+				$sortedTableArray[$sortedIndex][1] = 'M' . $positionMale;
+				$positionMale++;
+			}
+		
 				$sortedIndex++;
 		}
+		
+
+
 	}
 	
 	
@@ -343,7 +347,7 @@ function getHeaderArray($RaceGroupID, $RaceID, $display, &$headerIDsArray) {
 	require 'conn.php';
 	
 	//retrieve header fields
-	$q = "SELECT CONCAT(CPNo, ' ', CPName) AS CPNoDisplay, CPNo, Distance FROM `RacesControlPoints` 
+	$q = "SELECT CONCAT(CPNo, '<br>', CPName) AS CPNoDisplay, CPNo, Distance FROM `RacesControlPoints` 
 		JOIN ControlPoints ON RacesControlPoints.CPID = ControlPoints.CPID
 		WHERE RaceID = " . $RaceID;
 	$header_result = mysqli_query($conn,$q);
@@ -379,9 +383,9 @@ function getHeaderArray($RaceGroupID, $RaceID, $display, &$headerIDsArray) {
 			$i++;
 		}
 	//add other fields in front
-	$resultArray[0]['Value'] = "Position (Total)";
-	$resultArray[1]['Value'] = "Position (Gender)";
-	$resultArray[2]['Value'] = "Starting number";
+	$resultArray[0]['Value'] = "Position<br>(Total)";
+	$resultArray[1]['Value'] = "Position<br>(Gender)";
+	$resultArray[2]['Value'] = "Starting<br>BIB number";
 	$resultArray[3]['Value'] = "Name";
 	$resultArray[4]['Value'] = "Gender";
 	$resultArray[5]['Value'] = "Country";
@@ -393,13 +397,13 @@ function getHeaderArray($RaceGroupID, $RaceID, $display, &$headerIDsArray) {
 		}
 		
 		//Avg speed
-		$resultArray[$i+6]['Value'] = "Average Speed";
+		$resultArray[$i+6]['Value'] = "Average<br>Speed";
 		$i++;
 	
 	return $resultArray;
 }
 
-function DrawTheTable($headerArray, $tableArray, $display) {
+function DrawTheTable($headerArray, $tableArray, $display, $StartTime) {
 	$returnStr = "";
 	if ($display == 'live') {
 		$returnStr .= "
@@ -422,7 +426,11 @@ function DrawTheTable($headerArray, $tableArray, $display) {
 			$returnStr .= "	<tr>";
 			while (isset($tableArray[$rowCounter][$dataCounter])) {
 				$returnStr .= "	<td>";
-				$returnStr .= formatTime($tableArray[$rowCounter][$dataCounter]);
+				if (($dataCounter > 5) && ($dataCounter < count($tableArray[0])-1)) {				
+					$returnStr .= formatTime($tableArray[$rowCounter][$dataCounter], $StartTime);
+				} else {
+					$returnStr .= $tableArray[$rowCounter][$dataCounter];
+				}
 				$returnStr .= "	</td>";
 				$dataCounter++;
 			}
@@ -487,10 +495,44 @@ function getStartTime($races, $RaceID, $RaceGroupID) {
 	
 }
 
-function formatTime($rawValue) {
-	//TODO
-	//return substr(rawValue,11);
-	return $rawValue;
+function formatTime($rawValue, $StartTime) {
+	if ($rawValue != '--') {
+		$ValueInt = strtotime($rawValue);
+		$StartTimeInt = strtotime($StartTime);
+		$totalSec = $ValueInt - $StartTimeInt;
+		$sec = 0;
+		$min = 0;
+		$hr = 0;
+		if ($totalSec > 59) {
+			$min = floor($totalSec/60);
+			$sec = $totalSec % 60;
+			
+			if ($min > 59) {
+				$hr = floor($min/60);
+				$min = $min % 60;
+		
+			}
+		} else {
+			$sec = $totalSec;
+		}
+		
+		if ($sec < 10) {
+			$sec = '0' . $sec;
+		}
+		if ($min < 10) {
+			$min = '0' . $min;
+		}
+		/*
+		if ($hr < 10) {
+			$sec = '0' . $sec;
+		}
+		*/
+		
+		$returnValue = $hr . ":" . $min . ":" . $sec;
+		return $returnValue;
+	} else {
+		return $rawValue;
+	}
 }
 
 function getAvgSpeed($lastTimestamp, $StartTime, $distance) {
@@ -505,6 +547,6 @@ function getAvgSpeed($lastTimestamp, $StartTime, $distance) {
 		$sec = '0' . $sec;
 	}
 	$minkm_str = $min . ":" . $sec;
-	return number_format($kmh,2) . " km/h | " . $minkm_str . " min/km";
+	return number_format($kmh,2) . " km/h (" . $minkm_str . " min/km)";
 }
 ?>
