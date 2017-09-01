@@ -16,6 +16,7 @@ display - [live,final] - dali da prikaze live rezultati i officijalni
 <title>Results - Krali Marko Trails 2017</title>
 <meta name="Description" content="Live and Official results from the Krali Marko Trails 2017 race, Macedonia">
 <meta name="Keywords" content="Krali Marko, Krali Marko Trails, KMT, KMT2017, Running, Trail Running, Ultra Marathon, Macedonia, Ultra Trail Running">
+<meta http-equiv="refresh" content="30"/>
 <link href="https://fonts.googleapis.com/css?family=Cuprum|Fira+Sans+Extra+Condensed|Open+Sans+Condensed:300|Roboto+Condensed|Ubuntu+Condensed" rel="stylesheet">
 <link rel="stylesheet" href="/style_results.css">
 </head>
@@ -476,10 +477,11 @@ function DrawTheTable($headerArray, $tableArray, $display, $StartTime) {
 		<div class='live_results_table_wrapper'>
 			<table class='live_results_table'>
 				<tbody>
-					<tr>";
+					<tr class='table_header_row'>";
 			$headerCounter = 0;
 			while (isset($headerArray[$headerCounter]['Value'])) {
-				$returnStr .= "	<th>";
+				
+				$returnStr .= "	<th class='table_header_cell table_header_cell_col" . $headerCounter . "'>";
 				$returnStr .= $headerArray[$headerCounter]['Value'];
 				$returnStr .= "	</th>";
 				
@@ -490,9 +492,9 @@ function DrawTheTable($headerArray, $tableArray, $display, $StartTime) {
 			$rowCounter = 0;
 			while (isset($tableArray[$rowCounter][0])) {
 				$dataCounter = 0;
-				$returnStr .= "	<tr>";
+				$returnStr .= "	<tr class='table_row table_row_" . $rowCounter . " table_row_gender_" . $tableArray[$rowCounter][5] . "'>";
 				while (isset($tableArray[$rowCounter][$dataCounter])) {
-					$returnStr .= "	<td>";
+					$returnStr .= "	<td class='table_cell table_cell_col" . $dataCounter . "'>";
 					if (($dataCounter > 7) && ($dataCounter < count($tableArray[0])-1)) {				
 						$returnStr .= formatTime($tableArray[$rowCounter][$dataCounter], $StartTime);
 					} else {
