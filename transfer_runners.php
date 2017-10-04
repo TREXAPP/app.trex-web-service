@@ -107,6 +107,7 @@ if (isset($_POST["password"])) {
 			$queryKMT = '	SELECT rr_Racers.RacerID, FirstName, LastName, Gender, DateOfBirth, Country, TShirtSize, Email, Tel, Team, Comment, RaceID, BIB FROM rr_Racers
 						JOIN rr_Racers_Payment ON rr_Racers.RacerID = rr_Racers_Payment.RacerID
 						WHERE NOT BIB is null AND BIB != \'\' ';
+			
 			$response = getResponse($url, urlencode($queryKMT));
 			$runners = json_decode($response);
 			echo "Found " . count($runners) . " runners.<br><br>";
@@ -123,7 +124,7 @@ if (isset($_POST["password"])) {
 					} else {
 						$firstRow = false;
 					}
-					$runnersQuery .= "(NULL, '" . addslashes($runnerRow->FirstName) . "', '" . addslashes($runnerRow->LastName) . "', '" . addslashes($runnerRow->Gender) . "', '" . addslashes($runnerRow->DateOfBirth) . "', NULL, NULL, '" . addslashes($runnerRow->Country) . "', '" . addslashes(getTeamID($runnerRow->Team, $conn)) . "', NULL, '" . addslashes($runnerRow->TShirtSize) . "', '" . addslashes($runnerRow->Email) . "', '" . addslashes($runnerRow->Tel) . "', NULL, CURRENT_TIMESTAMP, 'oldID=" . addslashes($runnerRow->RacerID) . ";" . addslashes($runnerRow->Comment) . "')";
+					$runnersQuery .= "(NULL, '" . addslashes($runnerRow->FirstName) . "', '" . addslashes($runnerRow->LastName) . "', '" . addslashes($runnerRow->Gender) . "', '" . addslashes($runnerRow->DateOfBirth) . "', NULL, NULL, '" . addslashes($runnerRow->Country) . "', '" . addslashes(getTeamID($runnerRow->Team, $conn)) . "', NULL, '" . addslashes($runnerRow->TShirtSize) . "', '" . addslashes($runnerRow->Email) . "', '" . addslashes($runnerRow->Tel) . "', NULL, CURRENT_TIMESTAMP, '" . addslashes("oldID=" . $runnerRow->RacerID . ";" . $runnerRow->Comment) . "')";
 				}
 				
 				//echo $runnersQuery;
@@ -136,44 +137,59 @@ if (isset($_POST["password"])) {
 					$error = true;
 				}
 				
-				
-				echo "8. Inserting " .  count($runners) . " rows into ActiveRacers ...<br>";
-				
-				$activeRQuery = '';
-				
-				
-				$activeRQuery .= 'INSERT INTO `ActiveRacers` (`ActiveRacerID`, `RacerID`, `RaceID`, `Age`, `BIB`, `ChipCode`, `Started`, `Registered`, `Timestamp`, `Comment`) VALUES ';
-				$firstRow = true;
+				if (!$error) {
+					echo "8. Inserting " .  count($runners) . " rows into ActiveRacers ...<br>";
+					
+					$activeRQuery = '';
+					
+					
+					$activeRQuery .= 'INSERT INTO `ActiveRacers` (`ActiveRacerID`, `RacerID`, `RaceID`, `Age`, `BIB`, `ChipCode`, `Hide`, `Registered`, `Timestamp`, `Comment`) VALUES ';
+					$firstRow = true;
 
-				foreach ($runners as $runnerRow) {
-					if (!$firstRow) {
-						$activeRQuery .= ", ";
-					} else {
-						$firstRow = false;
+					foreach ($runners as $runnerRow) {
+						if (!$firstRow) {
+							$activeRQuery .= ", ";
+						} else {
+							$firstRow = false;
+						}
+						$activeRQuery .= "(NULL, '" . addslashes(getRacerID($runnerRow->RacerID, $conn)) . "', '" . addslashes(getRaceID($runnerRow->RaceID)) . "', NULL, '" . addslashes($runnerRow->BIB) . "', NULL, '0', '0', CURRENT_TIMESTAMP, NULL)";
 					}
-					$activeRQuery .= "(NULL, '" . addslashes(getRacerID($runnerRow->RacerID, $conn)) . "', '" . addslashes(getRaceID($runnerRow->RaceID)) . "', NULL, '" . addslashes($runnerRow->BIB) . "', NULL, '0', '0', CURRENT_TIMESTAMP, NULL)";
+					//testing
+					//echo $activeRQuery;
+					//echo "<br><br>";
+					$response = trexQuery($conn, $activeRQuery);
+					if (!mysqli_error($conn)) {
+						echo "Insert successful! Inserted " . mysqli_affected_rows($conn) . " rows in the table `ActiveRacers`.<br><br>";
+						
+						//9. delete oldID= from comments
+						echo "9. Updating Comments in RaceID...<br>";
+						foreach ($runners as $runnerRow) {
+							if (!$error) {
+								$q = "UPDATE `Racers` SET Comment='" . $runnerRow->Comment . "' WHERE Comment LIKE 'oldID=" . $runnerRow->RacerID . "%'";
+								$response = trexQuery($conn, $q);
+								if (!mysqli_error($conn)) {
+									echo "Successfully updated comments.<br><br>";
+								} else {
+									echo "Error! " . mysqli_error($conn) . "<br><br>";
+								}
+							}
+						}
+						
+					} else {
+						echo "Error! " . mysqli_error($conn) . "<br>";
+						$error = true;
+					}
 				}
-				
-				//echo $activeRQuery;
-				//echo "<br><br>";
-				$response = trexQuery($conn, $activeRQuery);
-				if (!mysqli_error($conn)) {
-					echo "Insert successful! Inserted " . mysqli_affected_rows($conn) . " rows in the table `ActiveRacers`.<br>";
-				} else {
-					echo "Error! " . mysqli_error($conn) . "<br>";
-					$error = true;
-				}
-				
 			}	
-			//INSERT INTO `ActiveRacers` (`ActiveRacerID`, `RacerID`, `RaceID`, `Age`, `BIB`, `ChipCode`, `Started`, `Registered`, `Timestamp`, `Comment`) VALUES (NULL, '14', '4', NULL, '014', NULL, '0', '0', CURRENT_TIMESTAMP, NULL);
+			//INSERT INTO `ActiveRacers` (`ActiveRacerID`, `RacerID`, `RaceID`, `Age`, `BIB`, `ChipCode`, `Hide`, `Registered`, `Timestamp`, `Comment`) VALUES (NULL, '14', '4', NULL, '014', NULL, '0', '0', CURRENT_TIMESTAMP, NULL);
 			
 
 		}
-		
 		if ($error) {
 			mysqli_rollback($conn);
 			echo "<br>Operation Failed :(<br>";
 		} else {
+			//mysqli_rollback($conn);
 			mysqli_commit($conn);
 			echo "<br>Operation Successful! :)<br>";
 		}

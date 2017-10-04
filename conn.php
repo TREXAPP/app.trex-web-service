@@ -15,5 +15,5 @@ if (mysqli_connect_errno($conn))
 } else { 
 //echo "db success<br/><br/>";
 }
-mysql_query("SET NAMES UTF8");
+mysqli_query($conn, "SET NAMES UTF8");
 ?>

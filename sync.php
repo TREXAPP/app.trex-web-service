@@ -80,7 +80,7 @@ if ($myArray['syncerror'] == '') {
 			$insertQuery .= ",'" . $deviceID . "'";
 		}
 		if ($comment) {
-			$insertQuery .= $myArray['rowsno'] . " runners fetched;" . $comment . "'";
+			$insertQuery .= $myArray['rowsno'] . " racers fetched;" . $comment . "'";
 		}
 		$insertQuery .= ");";		
 		//echo $insertQuery;
@@ -100,7 +100,7 @@ if ($myArray['syncerror'] == '') {
 }
 
 	echo json_encode($myArray);
-	mysql_close($conn);
+	mysqli_close($conn);
 	
 
 

@@ -1,0 +1,548 @@
+body {
+	font-family: fira sans extra condensed;
+	margin: 0px;
+}
+
+input[type="button"], input[type="submit"] {
+	padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+	background: #0ec;
+}
+
+
+.entry-title{
+	display: none;
+
+}
+
+.logedInInfo {
+  float: right;
+    width: 20%;
+      min-height: 105px;
+  text-align: right;
+}
+
+.Headline {
+    padding-top: 40px;
+    text-align: center;
+    width: 80%;
+   font-size: 2em;
+  float: left;
+}
+
+.userHeaderWrapper {
+    overflow: auto;
+    padding: 10px;
+    background-color: #242;
+    color: white;
+     
+}
+
+.container {
+
+      width: 100%;
+    max-width: none;
+}
+
+.loginFormContainer {
+ 	max-width: 400px;
+    margin: 0 auto;
+    overflow: auto;
+	margin-top: 30px;
+    margin-bottom: 100px;
+    background-color: #eee;
+    padding: 25px 25px 25px 25px;
+}
+
+.loginFormEntry label {
+      vertical-align: -webkit-baseline-middle;
+      display: block;
+    width: 100px;
+    float: left;
+    padding-top: 15px;
+    text-align: right;
+    padding-right: 10px;
+}
+
+
+.loginFormEntry input, .loginFormContainer input {
+  float: right;
+  width: 250px !important;
+  	padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.loginFormEntry {
+  overflow: auto;
+}
+
+.AdminMenuWrapper {
+  background-color: #575;
+    width: 200px;
+    float: left;
+}
+
+.ActiveMenuItem {
+	background-color: #696;
+}
+
+.AdminPageWrapper {
+     display: flex;
+     background-color: #fee;
+
+}
+
+.AdminMenuItem {
+    padding: 15px 25px 15px 25px;
+    border-bottom: 1px solid #aaa;
+    color: #fff;
+
+}
+
+.AdminMenuWrapper a {
+  text-decoration: none;
+}
+
+.AdminMenuWrapper a:active, .AdminMenuWrapper a.active, {
+  background-color: blue;
+}
+
+.AdminContentWrapper {
+  float: left;
+  padding: 30px;
+    	overflow-x: auto;
+}
+
+.msgPost {
+    color: white;
+    font-weight: bold;
+    background-color: red;
+    padding: 15px;
+    font-size: 18px;
+}
+
+/************ admin tabeli **********************/
+.filter
+
+@media screen and (max-width: 980px) {
+.et_pb_tab {
+  overflow-x:auto;
+  }
+.racers_table {
+  width: 1600px;
+  }
+.et_pb_all_tabs{
+    padding: 0px;
+  }
+.et_pb_row {
+    width: 90%;
+  }
+}
+
+@media screen and (min-width: 981px) {
+.racers_table {
+	table-layout: fixed;
+    width: 2500px;
+  }
+}
+
+.racers_table{    
+  font-size: 12px;
+  line-height: 15px;
+  color: black;
+}
+
+.racer_cell {
+  padding: 2px 4px 2px 4px;
+}
+
+.racers_header_cell {
+  padding: 2px 4px 2px 4px;
+  color: white;
+}
+
+.racer_cell_bib {
+ color: red;
+  font-weight: bold;
+  padding-left: 10px;
+  font-size: 16px;
+}
+
+.racer_row {
+  height: 35px;
+}
+
+.racers_header_cell_number {
+  width: 45px;
+}
+
+.racers_header_cell_gender {
+ width: 40px; 
+}
+
+.racers_header_cell_tshirtSize {
+  width: 80px;
+}
+
+.racers_header_cell_email {
+  width: 230px;
+}
+
+    
+
+.racers_header_row {
+  background-color: #9f3925;
+}
+
+.racer_notpayed_row {
+  background-color:white;
+}
+
+.racer_payed_row {
+  background-color: #cfe5ae;
+}
+
+.racers_header_cell_number, .racer_cell_number {
+  padding-left: 8px;
+}
+
+.racers_header_cell_input {
+  width: 490px;
+}
+ 
+
+
+.racer_cell_input input {
+    width: 10%;
+    float: left;
+  padding: 5px;
+
+}
+
+.racer_cell_bib input {
+    width: 45%;
+    float: left;
+  padding: 5px;
+
+}
+
+.racer_cell_input input:disabled {
+background-color:#eee;
+
+}
+
+.racer_cell_input input[type=checkbox] {
+    width: 15%;
+}
+
+.racer_cell_input select {
+    width: 24%;
+    float: left;
+  padding: 5px;
+}
+
+
+.racer_cell_input label {
+    float: left;
+    padding-top: 10px;
+    width: 95px;
+}
+
+.AdminTableWrapper {
+  overflow-x: auto;
+}
+
+.AdminTableTitle {
+	background: #ddd;
+    padding: 20px;
+    color: #252;
+}
+
+
+.stats_admin_table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.stats_admin_table th, .stats_admin_table td {
+    text-align: left;
+    padding: 8px;
+}
+
+.stats_admin_table tr:nth-child(even){background-color: #fff}
+
+.stats_admin_table th {
+    background-color: #555;
+    color: white !important;
+}
+
+.AdminContentWrapper {
+  width: 100%;
+}
+
+.admin-table-indent-1 {
+  padding-left:15px !important;
+}
+
+.admin-table-indent-2 {
+    padding-left:30px !important;
+}
+
+/*******************************/
+.race_set_start {
+	text-align: center;
+	float: left;
+	padding: 1%;
+	display: block;
+	width: 23%;
+}
+
+.race_set_start input[type="submit"] {
+	width: 100%;
+}
+
+.race_set_start input[type="text"] {
+	width: 100%;
+	padding: 12px 5px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+
+/****** NEW RUNNER *************/
+
+.newRunner_field {
+	width: 50%;
+    margin:0 auto;
+	
+}
+
+.newRunner_field input, .newRunner_field select {
+
+	padding: 12px 5px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.newRunner_field input {
+	width: 100%;
+}
+
+.newRunner_field select {
+	width: 65%;
+	margin-left: 10px;
+}
+
+
+
+/*** MAIN TABLES ***/
+
+.official_results_link, .separator_results_link {
+	display: none;
+}
+
+.live_results_table_wrapper {
+    width: 100%;
+    padding-bottom: 20px;
+    overflow-x: auto;
+	overflow-y: hidden;
+	min-height: .01%;
+	margin-bottom: 50px;
+	
+}
+
+.live_results_table, .live_results_table span {
+	 text-align: center;
+	 font-size: 13.5px;
+	 
+ }
+    
+
+
+.live_results_table {
+    border-collapse: collapse; 
+    overflow-x: auto;
+    margin: 0 auto;
+}
+
+.live_results_table th, td {
+    padding: 2px 2px 2px 2px;
+	white-space: nowrap;
+}
+
+.live_results_table tr:nth-child(even){
+	background-color: #fff;
+}
+
+.live_results_table tr, .live_results_table tr td, .live_results_table tr th {
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+.live_results_table th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.table_header_row_race4 th {
+	background-color: rgba(255,0,0,1);
+}
+
+.table_header_row_race5 th {
+	background-color: rgba(255,128,0,1);
+}
+
+.table_header_row_race6 th {
+	background-color: rgba(128,28,125,1);
+}
+
+.table_header_row_race7 th {
+	background-color: rgba(0,125,182,1);
+}
+
+.live_results_table tr:hover {
+	background-color: #343;
+    color: white;
+}
+
+.table_cell_col10 {
+	text-align: left;
+}
+
+.table_cell_col10 img {
+    height: 16px;
+    margin-bottom: -2px;
+}
+
+
+.table_cell_cpno99 {
+	font-weight: bold;
+}
+
+
+.cell_status {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.cell_status_notcheckedin {
+    /* background: #999999; */
+    color: #999999;
+}
+
+.cell_status_checkedin {
+    /* background: black; */
+    color: green;
+	font-weight: bold;
+}
+
+.cell_status_dns {
+    background: #999999;
+    color: white;
+}
+
+.cell_status_dnf {
+    background: red;
+    color: white;
+}
+
+.cell_status_dsq {
+    background: red;
+    color: #b20000;
+}
+
+.cell_status_running {
+    background: green;
+    color: white;
+}
+
+.cell_status_finished {
+    background: #333;
+    color: white;
+}
+
+.change_bib_submit, .change_status_submit, .change_hide_submit {
+	padding: initial !important;
+    margin: initial !important;
+    border-radius: initial !important;
+	font-size: 13.5px;
+	font-family: fira sans extra condensed;
+}
+
+.change_status input[type="text"], .change_bib input[type="text"], .change_hide input[type="text"] {
+	width: 30px;
+	font-size: 13.5px;
+	font-family: fira sans extra condensed;
+}
+
+.filter_form input {
+	width: 100%;
+	float: left;
+	font-size: 13.5px;
+	font-family: fira sans extra condensed;
+}
+
+.filter_form input[type="button"], .filter_form input[type="submit"] {
+	padding: initial !important;
+    margin: initial !important;
+    border-radius: initial !important;
+    font-size: 13.5px;
+    font-family: fira sans extra condensed;
+}
+
+.filter_form input[type="text"] {
+	border-right-width: 0px;
+    border-left-width: 0px;
+}
+
+.FilterDeleteSubmit {
+	float: left;
+    padding: initial !important;
+    margin: initial !important;
+    border-radius: initial !important;
+    font-size: 13.5px;
+    font-family: fira sans extra condensed;
+}
+
+.filter_delete_form, .filter_info_label {
+	display: inline-block;
+    float: left;
+    padding-left: 10px;
+}
+
+.filter_info span {
+	display: inline-block;
+    float: left;
+	padding-left: 10px;
+}
+
+.filter_info_display {
+	font-weight: bold;
+}
+
+.urgent_title {
+	margin: 0 auto;
+    width: fit-content;
+    text-align: center;
+    padding: 15px;
+    color: white;
+    background: red;
+    margin-bottom: 15px;
+    border: 3px solid black;
+    font-size: 24px;
+}
+/* MAIN TABLES END */
